@@ -125,7 +125,7 @@ static jl_array_t *_new_array_(jl_value_t *atype, uint32_t ndims, size_t *dims,
         for(i=0; i < ndims; i++)
             adims[i] = dims[i];
     }
-
+    a->issubshared=0;
     return a;
 }
 
@@ -183,6 +183,7 @@ jl_array_t *jl_reshape_array(jl_value_t *atype, jl_array_t *data, jl_value_t *di
     a->how = 3;
     a->data = data->data;
     a->isshared = 1;
+    a->issubshared = data->issubshared;
     data->isshared = 1;
 
     if (ndims == 1) {
@@ -240,6 +241,7 @@ jl_array_t *jl_ptr_to_array_1d(jl_value_t *atype, void *data, size_t nel,
     a->ptrarray = !isunboxed;
     a->ndims = 1;
     a->isshared = 1;
+    a->issubshared = 0;
     a->isaligned = 0;  // TODO: allow passing memalign'd buffers
     if (own_buffer) {
         a->how = 2;
@@ -292,6 +294,7 @@ jl_array_t *jl_ptr_to_array(jl_value_t *atype, void *data, jl_value_t *dims,
     a->ndims = ndims;
     a->offset = 0;
     a->isshared = 1;
+    a->issubshared = 0;
     a->isaligned = 0;
     if (own_buffer) {
         a->how = 2;
@@ -721,6 +724,15 @@ void jl_array_grow_beg(jl_array_t *a, size_t inc)
 #endif
     a->nrows += inc;
 }
+
+unsigned short jl_array_has_sub(jl_array_t *a) {
+  return a->issubshared;
+}
+
+void jl_array_set_sub(jl_array_t *a) {
+ a->issubshared=1;
+}
+
 
 void jl_array_del_beg(jl_array_t *a, size_t dec)
 {

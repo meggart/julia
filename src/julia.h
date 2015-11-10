@@ -148,6 +148,7 @@ typedef struct {
             unsigned short pooled:1;
             unsigned short ptrarray:1;  // representation is pointer array
             unsigned short isshared:1;  // data is shared by multiple Arrays
+            unsigned short issubshared:1;
             unsigned short isaligned:1; // data allocated with memalign
         };
         unsigned short flags;
@@ -1069,6 +1070,8 @@ DLLEXPORT void jl_array_grow_beg(jl_array_t *a, size_t inc);
 DLLEXPORT void jl_array_del_beg(jl_array_t *a, size_t dec);
 DLLEXPORT void jl_array_sizehint(jl_array_t *a, size_t sz);
 DLLEXPORT void jl_cell_1d_push(jl_array_t *a, jl_value_t *item);
+DLLEXPORT unsigned short jl_array_has_sub(jl_array_t *a);
+DLLEXPORT void jl_array_set_sub(jl_array_t *a);
 DLLEXPORT jl_value_t *jl_apply_array_type(jl_datatype_t *type, size_t dim);
 // property access
 DLLEXPORT void *jl_array_ptr(jl_array_t *a);
